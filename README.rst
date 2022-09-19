@@ -30,14 +30,14 @@
 |
 
 =========
-devbackup
+DevBackup
 =========
 
 
-    Add a short description here!
+    A backup tool for developers.
 
 
-A longer description of your project goes here...
+This tool is designed to backup essential files and environments for developers.
 
 
 .. _pyscaffold-notes:
