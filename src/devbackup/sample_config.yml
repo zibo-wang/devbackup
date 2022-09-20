@@ -1,0 +1,19 @@
+git_url: git@github.com:zib0/dotfiles.git
+
+dotfiles:
+  good
+  bad
+  ugly
+
+brew:
+  git
+  vim
+  tmux
+
+brew-cask:
+  google-chrome
+  iterm2
+  slack
+
+exclude:
+  *.swp

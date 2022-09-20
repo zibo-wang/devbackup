@@ -40,6 +40,20 @@ DevBackup
 This tool is designed to backup essential files and environments for developers.
 
 
+Features
+====
+
+This tool backups dotfiles and dotfolders in the home directory as well as the environments of the following tools:
+
+-   homebrew
+-   conda
+
+
+Sample Configuration
+====
+
+placeholder for format of config file
+
 .. _pyscaffold-notes:
 
 Note
