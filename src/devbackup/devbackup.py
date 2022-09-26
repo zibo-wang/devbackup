@@ -23,7 +23,7 @@ _logger = logging.getLogger(__name__)
 # ---- Python API ----
 # The functions defined in this section can be imported by users in their
 # Python scripts/interactive interpreter, e.g. via
-# `from devbackup.skeleton import fib`,
+# `from devbackup.devbackup import load_config``,
 # when using this Python module as a library.
 
 
@@ -41,6 +41,39 @@ def load_config(config_path: Path) -> dict:
         config = yaml.load(f, Loader=yaml.FullLoader)
     return config
 
+
+def make_dir(path: Path):
+    """Make a directory if it doesn't exist
+
+    Args:
+      path (str): directory path
+    """
+    if not path.exists():
+        path.mkdir(parents=True)
+
+
+def copy_file(src: Path, dst: Path, exclude: list = []):
+    """Copy a file to destination
+
+    Args:
+      src (str): source file path
+      dst (str): destination file path
+      exclude (list): exclude list
+    """
+    if src.name not in exclude:
+        copyfile(src, dst)
+
+
+def copy_dir(src: Path, dst: Path, exclude: list = []):
+    """Copy a directory to destination
+
+    Args:
+      src (str): source directory path
+      dst (str): destination directory path
+      exclude (list): exclude list
+    """
+    if src.name not in exclude:
+        copytree(src, dst)
 
 
 # ---- CLI ----
