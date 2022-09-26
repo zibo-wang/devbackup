@@ -1,19 +1,32 @@
 git_url: git@github.com:zib0/dotfiles.git
 
 dotfiles:
-  good
-  bad
-  ugly
+  - bashrc
+  - bash_history
+  - condarc
+  - Rprofile
+  - gitconfig
+  - profile
+
+dotfolders:
+  - config/alacritty
+  - config/fish
+  - config/nvim
+  - config/iterm2
+  - config/kitty
+  - config/rstudio
+  - hammerspoon
 
 brew:
-  git
-  vim
-  tmux
+  - git
+  - vim
+  - tmux
 
 brew-cask:
-  google-chrome
-  iterm2
-  slack
+  - google-chrome
+  - iterm2
+  - slack
 
 exclude:
-  *.swp
+  - "*.swp"
+  - id_rsa

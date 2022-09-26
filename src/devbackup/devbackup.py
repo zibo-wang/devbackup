@@ -4,7 +4,12 @@ This is the entry point for dbu command.
 
 import argparse
 import logging
+import subprocess as sp
 import sys
+from pathlib import Path
+from shutil import copyfile, copytree
+
+import yaml
 
 from devbackup import __version__
 
@@ -22,20 +27,20 @@ _logger = logging.getLogger(__name__)
 # when using this Python module as a library.
 
 
-def fib(n):
-    """Fibonacci example function
+def load_config(config_path: Path) -> dict:
+    """Load config from config file
 
     Args:
-      n (int): integer
+      config_path (str): config file path
 
     Returns:
-      int: n-th Fibonacci number
+      :obj:`dict`: config dict
     """
-    assert n > 0
-    a, b = 1, 1
-    for _i in range(n - 1):
-        a, b = b, a + b
-    return a
+
+    with open(config_path, "r") as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+    return config
+
 
 
 # ---- CLI ----
@@ -88,7 +93,10 @@ def setup_logging(loglevel):
     """
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
     logging.basicConfig(
-        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
+        level=loglevel,
+        stream=sys.stdout,
+        format=logformat,
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
 
@@ -105,7 +113,8 @@ def main(args):
     args = parse_args(args)
     setup_logging(args.loglevel)
     _logger.debug("Starting Tools")
-    print("Hello world")
+    config = load_config(Path(args.config))
+    print(config)
     _logger.info("Script ends here.")
 
 
