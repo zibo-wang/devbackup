@@ -7,6 +7,7 @@ dotfiles:
   - Rprofile
   - gitconfig
   - profile
+  - config/starship.toml
 
 dotfolders:
   - config/alacritty
@@ -30,3 +31,4 @@ exclude:
   - "*.swp"
   - id_rsa
   - ./config/nvim/plugged
+  - "*.socket"

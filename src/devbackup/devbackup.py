@@ -4,10 +4,11 @@ This is the entry point for dbu command.
 
 import argparse
 import logging
+import shlex
 import subprocess as sp
 import sys
 from pathlib import Path
-from shutil import copyfile, copytree, rmtree
+from shutil import copyfile, copytree, ignore_patterns, rmtree
 
 import yaml
 
@@ -63,6 +64,7 @@ def copy_file(src: Path, dst: Path, exclude: list = []):
       dst (str): destination file path
       exclude (list): exclude list
     """
+    make_dir(dst.parent)
     if src.name not in exclude:
         copyfile(src, dst)
 
@@ -76,7 +78,7 @@ def copy_dir(src: Path, dst: Path, exclude: list = []):
       exclude (list): exclude list
     """
     if src.name not in exclude:
-        copytree(src, dst)
+        copytree(src, dst, ignore=ignore_patterns(*exclude))
 
 
 def backup(path: Path, config: dict):
@@ -113,13 +115,10 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser(description="A backup tool for developers.")
-    parser.add_argument("--output", default="backup", help="output directory")
     parser.add_argument(
-        "--config",
-        default="config.yaml",
-        help="config file path",
+        "-o", "--output", default="backup", help="output directory"
     )
-    
+
     parser.add_argument(
         "--version",
         action="version",
@@ -176,7 +175,45 @@ def main(args):
     config = load_config(Path(args.config))
     print(config)
     print(Path.home())
+    _logger.debug(f"config: {config}")
+    make_dir(Path(args.output))
+    _logger.debug(f"output: {args.output}")
+
+    # backup dotfiles here
+    for path in config["dotfiles"]:
+        print(Path.home() / ("." + path))
+        copy_file(
+            Path.home() / ("." + path),
+            Path(args.output) / path,
+            config["exclude"],
+        )
+        _logger.debug("Copied %s", path)
+
+    # backup dotfolders here
+    for path in config["dotfolders"]:
+        copy_dir(
+            Path.home() / ("." + path),
+            Path(args.output) / path,
+            config["exclude"],
+        )
+        _logger.debug("Copied %s", path)
+
+    # backup homebrew list
+    output = sp.run(["brew", "list", "--formula"], stdout=sp.PIPE)
+    with open(Path(args.output) / "brew.txt", "w") as f:
+        f.write(output.stdout.decode("utf-8"))
+
+    # backup cask list
+    output = sp.run(["brew", "list", "--cask"], stdout=sp.PIPE)
+    with open(Path(args.output) / "cask.txt", "w") as f:
+        f.write(output.stdout.decode("utf-8"))
+
     _logger.info("Script ends here.")
+
+    # backup all conda envs
+    output = sp.run(["conda", "env", "list"], stdout=sp.PIPE)
+    envs = output.stdout.decode("utf-8").split("\n").split(" ")
+    print(envs)
 
 
 def run():
