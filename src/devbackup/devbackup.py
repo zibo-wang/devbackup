@@ -7,7 +7,7 @@ import logging
 import subprocess as sp
 import sys
 from pathlib import Path
-from shutil import copyfile, copytree
+from shutil import copyfile, copytree, rmtree
 
 import yaml
 
@@ -43,12 +43,15 @@ def load_config(config_path: Path) -> dict:
 
 
 def make_dir(path: Path):
-    """Make a directory if it doesn't exist
+    """Make a directory if it doesn't exist, overwrite if it does
 
     Args:
       path (str): directory path
     """
     if not path.exists():
+        path.mkdir(parents=True)
+    else:
+        rmtree(path)
         path.mkdir(parents=True)
 
 
@@ -76,6 +79,23 @@ def copy_dir(src: Path, dst: Path, exclude: list = []):
         copytree(src, dst)
 
 
+def backup(path: Path, config: dict):
+    """Backup files and directories to a destination"""
+    try:
+        for item in config["dotfiles"]:
+            src = Path.home() / ("." + item)
+            dst = path / item
+            make_dir(dst.parent)
+            copy_file(src, dst, config["exclude"])
+        for item in config["dotfolders"]:
+            src = Path.home() / ("." + item)
+            dst = path / item
+            make_dir(dst)
+            copy_dir(src, dst, config["exclude"])
+    except KeyError:
+        pass
+
+
 # ---- CLI ----
 # The functions defined in this section are wrappers around the main Python
 # API allowing them to be called directly from the terminal as a CLI
@@ -93,6 +113,13 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser(description="A backup tool for developers.")
+    parser.add_argument("--output", default="backup", help="output directory")
+    parser.add_argument(
+        "--config",
+        default="config.yaml",
+        help="config file path",
+    )
+    
     parser.add_argument(
         "--version",
         action="version",
@@ -148,6 +175,7 @@ def main(args):
     _logger.debug("Starting Tools")
     config = load_config(Path(args.config))
     print(config)
+    print(Path.home())
     _logger.info("Script ends here.")
 
 

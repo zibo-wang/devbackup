@@ -11,7 +11,6 @@ dotfiles:
 dotfolders:
   - config/alacritty
   - config/fish
-  - config/nvim
   - config/iterm2
   - config/kitty
   - config/rstudio
@@ -30,3 +29,4 @@ brew-cask:
 exclude:
   - "*.swp"
   - id_rsa
+  - ./config/nvim/plugged
