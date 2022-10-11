@@ -8,7 +8,7 @@ import shlex
 import subprocess as sp
 import sys
 from pathlib import Path
-from shutil import copyfile, copytree, ignore_patterns, rmtree
+from shutil import copy2, copytree, ignore_patterns, rmtree
 
 import yaml
 
@@ -66,7 +66,7 @@ def copy_file(src: Path, dst: Path, exclude: list = []):
     """
     make_dir(dst.parent)
     if src.name not in exclude:
-        copyfile(src, dst)
+        copy2(src, dst, follow_symlinks=True)
 
 
 def copy_dir(src: Path, dst: Path, exclude: list = []):
@@ -78,7 +78,7 @@ def copy_dir(src: Path, dst: Path, exclude: list = []):
       exclude (list): exclude list
     """
     if src.name not in exclude:
-        copytree(src, dst, ignore=ignore_patterns(*exclude))
+        copytree(src, dst, ignore=ignore_patterns(*exclude), copy_function=copy2)
 
 
 def backup(path: Path, config: dict):
@@ -171,21 +171,19 @@ def main(args):
     """
     args = parse_args(args)
     setup_logging(args.loglevel)
-    _logger.debug("Starting Tools")
     config = load_config(Path(args.config))
     _logger.debug(f"config: {config}")
     make_dir(Path(args.output))
-    _logger.debug(f"output: {args.output}")
+    _logger.info(f"output: {args.output}")
 
     # backup dotfiles here
     for path in config["dotfiles"]:
-        print(Path.home() / ("." + path))
         copy_file(
             Path.home() / ("." + path),
             Path(args.output) / path,
             config["exclude"],
         )
-        _logger.debug("Copied %s", path)
+        _logger.info("Copied %s", Path.home() / ("." + path))
 
     # backup dotfolders here
     for path in config["dotfolders"]:
@@ -194,17 +192,19 @@ def main(args):
             Path(args.output) / path,
             config["exclude"],
         )
-        _logger.debug("Copied %s", path)
+        _logger.info("Copied %s", Path.home() / ("." + path))
 
     # backup homebrew list
     output = sp.run(["brew", "list", "--formula"], stdout=sp.PIPE)
     with open(Path(args.output) / "brew.txt", "w") as f:
         f.write(output.stdout.decode("utf-8"))
+    _logger.info("Copied brew list")
 
     # backup cask list
     output = sp.run(["brew", "list", "--cask"], stdout=sp.PIPE)
     with open(Path(args.output) / "cask.txt", "w") as f:
         f.write(output.stdout.decode("utf-8"))
+    _logger.info("Copied cask list")
 
     # backup all conda envs
     output = sp.run(["conda", "env", "list"], stdout=sp.PIPE)
@@ -216,6 +216,7 @@ def main(args):
         with open(Path(args.output) / f"conda_backups/{env}.yml", "w") as f:
             # Split command will remove prefix from the file
             f.write("\n".join(output.stdout.decode("utf-8").split("\n")[:-2]))
+        _logger.info("Copied conda env %s", env)
 
 
 def run():
