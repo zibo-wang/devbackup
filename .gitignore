@@ -52,3 +52,8 @@ MANIFEST
 .venv*/
 .conda*/
 .python-version
+
+# custom
+.ipynb_checkpoints
+backup
+.ipynb

@@ -173,8 +173,6 @@ def main(args):
     setup_logging(args.loglevel)
     _logger.debug("Starting Tools")
     config = load_config(Path(args.config))
-    print(config)
-    print(Path.home())
     _logger.debug(f"config: {config}")
     make_dir(Path(args.output))
     _logger.debug(f"output: {args.output}")
@@ -208,12 +206,16 @@ def main(args):
     with open(Path(args.output) / "cask.txt", "w") as f:
         f.write(output.stdout.decode("utf-8"))
 
-    _logger.info("Script ends here.")
-
     # backup all conda envs
     output = sp.run(["conda", "env", "list"], stdout=sp.PIPE)
-    envs = output.stdout.decode("utf-8").split("\n").split(" ")
-    print(envs)
+    envs = output.stdout.decode("utf-8").split("\n")[2:-2]
+    envs = [e.split("  ")[0] for e in envs]
+    make_dir(Path(args.output) / "conda_backups")
+    for env in envs:
+        output = sp.run(["conda", "env", "export", "-n", env], stdout=sp.PIPE)
+        with open(Path(args.output) / f"conda_backups/{env}.yml", "w") as f:
+            # Split command will remove prefix from the file
+            f.write("\n".join(output.stdout.decode("utf-8").split("\n")[:-2]))
 
 
 def run():
