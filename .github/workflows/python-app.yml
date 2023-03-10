@@ -21,11 +21,11 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v2
       with:
         auto-activate-base: true
-        activate-environment: ""
+        activate-environment: "base"
     - name: Install dependencies
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
-        conda env update --file requirement.txt --name base
+        conda env update --file environment.yml --name base
     - name: Test Mypy
       run: |
         tox -e py310-mypy
