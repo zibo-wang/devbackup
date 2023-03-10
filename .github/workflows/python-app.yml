@@ -24,8 +24,7 @@ jobs:
         auto-activate-base: false
         activate-environment: py310
         environment-file: environment.yml
-        condarc-file: condarc.yml
-        python-version: 3.10.9
+        python-version: 3.10
 
     - name: Test Mypy
       run: |

@@ -1,9 +1,0 @@
-channels: 
-  - defaults
-  - conda-forge
-  - bioconda
-  - R
-channel_priority: strict
-auto_activate_base: false
-create_default_packages:
-  - python
