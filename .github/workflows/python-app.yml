@@ -25,7 +25,8 @@ jobs:
     - name: Install dependencies
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
-        conda env update --file environment.yml --name base
+        conda env create -f environment.yml
+        conda activate py310
     - name: Test Mypy
       run: |
         tox -e py310-mypy
