@@ -39,10 +39,10 @@ jobs:
         tox -e build
     - name: Build Doc
       run: |
-        tox -e doc
+        tox -e docs
     - name: Doc Test
       run: |
-        tox -e doctest
+        tox -e doctests
     - name: Link Test
       run: |
         tox -e linkcheck
