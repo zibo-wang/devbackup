@@ -24,11 +24,12 @@ jobs:
         auto-activate-base: false
         activate-environment: py310
         environment-file: environment.yml
+        condarc-file: condarc.yml
         python-version: 3.10
 
-    - name: Activate conda environment
-      shell: bash -l {0}
-      run: conda activate py310
+    - name: Activate Env
+      run: |
+        conda activate py310
 
     - name: Test Mypy
       run: |
