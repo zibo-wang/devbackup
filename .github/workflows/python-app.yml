@@ -25,27 +25,27 @@ jobs:
         python-version: 3.10.9
     - name: Install dependencies
       run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        $CONDA/bin/conda env update --file environment.yml --name base
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
     - name: Test Mypy
       run: |
-        $CONDA/bin/conda/tox -e py310-mypy
+        tox -e py310-mypy
     - name: Test with pytest
       run: |
-        $CONDA/bin/conda/tox -e py310-pytest
+        tox -e py310-pytest
     - name: Build 
       run: |
-        $CONDA/bin/conda/tox -e build
+        tox -e build
     - name: Build Doc
       run: |
-        $CONDA/bin/conda/tox -e doc
+        tox -e doc
     - name: Doc Test
       run: |
-        $CONDA/bin/conda/tox -e doctest
+        tox -e doctest
     - name: Link Test
       run: |
-        $CONDA/bin/conda/tox -e linkcheck
+        tox -e linkcheck
     - name: Clean
       run: |
-        $CONDA/bin/conda/tox -e clean
+        tox -e clean
