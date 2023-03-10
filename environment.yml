@@ -66,7 +66,6 @@ dependencies:
       - pygls==1.0.1
       - pygments==2.14.0
       - pyspellchecker==0.7.1
-      - python==3.10.9
       - requests==2.28.2
       - snowballstemmer==2.2.0
       - sphinx==6.1.3
