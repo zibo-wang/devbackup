@@ -19,38 +19,33 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
       with:
-        auto-activate-base: false
-        activate-environment: py310
-        environment-file: environment.yml
-        condarc-file: condarc.yml
-        python-version: 3.10.9
-
-    - name: Activate Env
+        python-version: 3.10
+    - name: Install dependencies
       run: |
-        conda init bash
-        source ~/.bash_profile
-        conda activate py310
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        $CONDA/bin/conda env update --file environment.yml --name base
 
     - name: Test Mypy
       run: |
-        tox -e py310-mypy
+        $CONDA/bin/conda/tox -e py310-mypy
     - name: Test with pytest
       run: |
-        tox -e py310-pytest
+        $CONDA/bin/conda/tox -e py310-pytest
     - name: Build 
       run: |
-        tox -e build
+        $CONDA/bin/conda/tox -e build
     - name: Build Doc
       run: |
-        tox -e doc
+        $CONDA/bin/conda/tox -e doc
     - name: Doc Test
       run: |
-        tox -e doctest
+        $CONDA/bin/conda/tox -e doctest
     - name: Link Test
       run: |
-        tox -e linkcheck
+        $CONDA/bin/conda/tox -e linkcheck
     - name: Clean
       run: |
-        tox -e clean
+        $CONDA/bin/conda/tox -e clean
