@@ -30,7 +30,7 @@ jobs:
     - name: Activate Env
       run: |
         conda init bash
-        source ~/.bashrc
+        source ~/.bash_profile
         conda activate py310
 
     - name: Test Mypy
