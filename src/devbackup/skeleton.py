@@ -22,7 +22,10 @@ References:
 
 import argparse
 import logging
+import os
+import shutil
 import sys
+import time
 
 from devbackup import __version__
 
@@ -54,6 +57,41 @@ def fib(n):
     for _i in range(n - 1):
         a, b = b, a + b
     return a
+
+
+def safe_copy(src, dest) -> None:
+    """Copy a file or directory to a destination, creating parent directories if
+    they don't exist. If the destination already exists, it will be renamed to
+    ``dest.bak.<timestamp>``.
+
+    Args:
+        src (str): Source path
+        dest (str): Destination path
+
+    Returns:
+        None
+    """
+    if not os.path.exists(src):
+        raise FileNotFoundError(f"Source path does not exist: {src}")
+
+    if os.path.exists(dest):
+        timestamp = int(time.time())
+        backup_ext = f".bak.{timestamp}"
+        backup_dest = dest + backup_ext
+        os.rename(dest, backup_dest)
+        print(f"Existing destination renamed to: {backup_dest}")
+
+    if os.path.isfile(src):
+        # If source is a file, create parent directories if they don't exist
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copy2(src, dest)
+    elif os.path.isdir(src):
+        # If source is a directory, copy the directory
+        shutil.copytree(src, dest)
+    else:
+        raise ValueError(f"Source path is not a file or directory: {src}")
+
+    print(f"Successfully copied {src} to {dest}")
 
 
 # ---- CLI ----
